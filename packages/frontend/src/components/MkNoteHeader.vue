@@ -1,39 +1,94 @@
 <template>
-<header :class="$style.root">
-	<MkA v-user-preview="note.user.id" :class="$style.name" :to="userPage(note.user)">
-		<MkUserName :user="note.user"/>
-	</MkA>
-	<div v-if="note.user.isBot" :class="$style.isBot">bot</div>
-	<div :class="$style.username"><MkAcct :user="note.user"/></div>
-	<div v-if="note.user.badgeRoles" :class="$style.badgeRoles">
-		<img v-for="role in note.user.badgeRoles" :key="role.id" v-tooltip="role.name" :class="$style.badgeRole" :src="role.iconUrl"/>
-	</div>
-	<div :class="$style.info">
-		<MkA :to="notePage(note)">
-			<MkTime :time="note.createdAt"/>
+	<header :class="$style.root" :style="noteHeaderViewProp">
+		<MkA v-user-preview="note.user.id" :class="$style.name" :to="userPage(note.user)" :style="noteHeaderContentProp">
+			<MkUserName :user="note.user" />
 		</MkA>
-		<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
-			<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
-			<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
-			<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
-		</span>
-		<span v-if="note.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
-		<span v-if="note.channel" style="margin-left: 0.5em;" :title="note.channel.name"><i class="ti ti-device-tv"></i></span>
-	</div>
-</header>
+		<div v-if="note.user.isBot" :class="$style.isBot">bot</div>
+		<div :class="$style.username" :style="noteHeaderContentProp">
+			<MkAcct :user="note.user" />
+		</div>
+		<div v-if="note.user.badgeRoles" :class="$style.badgeRoles" :style="[noteHeaderRoleProp, noteHeaderContentProp]">
+			<img v-for="role in note.user.badgeRoles" :key="role.id" v-tooltip="role.name" :class="$style.badgeRole" :src="role.iconUrl" />
+		</div>
+		<div :class="$style.info">
+			<MkA :to="notePage(note)">
+				<MkTime :time="note.createdAt" />
+			</MkA>
+			<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
+				<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
+				<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
+				<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
+			</span>
+			<span v-if="note.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
+			<span v-if="note.channel" style="margin-left: 0.5em;" :title="note.channel.name"><i class="ti ti-device-tv"></i></span>
+		</div>
+	</header>
 </template>
 
 <script lang="ts" setup>
-import { } from 'vue';
+import { computed } from 'vue';
 import * as misskey from 'misskey-js';
 import { i18n } from '@/i18n';
 import { notePage } from '@/filters/note';
 import { userPage } from '@/filters/user';
+import { wrap } from 'module';
+import { defaultStore } from '@/store';
+import { $computed } from 'node_modules/@vue-macros/reactivity-transform/macros';
 
 defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
 }>();
+
+// 以下 dream での追加
+const headerWrapStyles = {
+	flexWrap: "wrap"
+};
+
+const headerOneLineStyles = {
+	display: "flex",
+};
+
+const headerRoleViewStyles = {
+	overflowX: "auto"
+};
+
+const headerContentStyles = {
+	flexShrink: "4",
+	textOverflow: "clip"
+};
+
+const roleScrollStyles = {
+	overflowX: "scroll"
+};
+
+const roleDisableStyles = {
+	display: "none"
+}
+
+const noteHeaderViewProp = computed(() => {
+	const style: string = defaultStore.state.noteHeaderViewStyle;
+	if (style === "wrap") {
+		return headerWrapStyles;
+	}
+});
+
+const noteHeaderRoleProp = computed(() => {
+	const style: string = defaultStore.state.noteHeaderRoleView;
+	if (style === "scrollable") {
+		return roleScrollStyles;
+	}
+	if (style === "disable") {
+		return roleDisableStyles;
+	}
+});
+
+const noteHeaderContentProp = computed(() => {
+	const style: string = defaultStore.state.noteHeaderViewStyle;
+	if (style === "oneLine") {
+		return headerContentStyles;
+	}
+});
 </script>
 
 <style lang="scss" module>
@@ -90,7 +145,7 @@ defineProps<{
 	height: 1.3em;
 	vertical-align: -20%;
 
-	& + .badgeRole {
+	&+.badgeRole {
 		margin-left: 0.2em;
 	}
 }
