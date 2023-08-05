@@ -426,6 +426,8 @@ export class UserEntityService implements OnModuleInit {
 					color: role.color,
 					iconUrl: role.iconUrl,
 					description: role.description,
+					isAdministrator: false, // 互換性維持
+					isModerator: false, // 互換性維持
 					permissionGroup: role.permissionGroup,
 					displayOrder: role.displayOrder,
 				}))),
