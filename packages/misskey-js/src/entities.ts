@@ -40,6 +40,7 @@ export type UserDetailed = UserLite & {
 	fields: {name: string; value: string}[];
 	followersCount: number;
 	followingCount: number;
+	emojiCount: number;
 	hasPendingFollowRequestFromYou: boolean;
 	hasPendingFollowRequestToYou: boolean;
 	isAdmin: boolean;

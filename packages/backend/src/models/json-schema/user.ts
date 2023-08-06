@@ -181,6 +181,10 @@ export const packedUserDetailedNotMeOnlySchema = {
 			type: 'number',
 			nullable: false, optional: false,
 		},
+		emojiCount: {
+			type: 'number',
+			nullable: false, optional: false,
+		},
 		pinnedNoteIds: {
 			type: 'array',
 			nullable: false, optional: false,

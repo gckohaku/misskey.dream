@@ -405,6 +405,7 @@ export class UserEntityService implements OnModuleInit {
 				followersCount: followersCount ?? 0,
 				followingCount: followingCount ?? 0,
 				notesCount: user.notesCount,
+				emojiCount: user.emojiCount,
 				pinnedNoteIds: pins.map(pin => pin.noteId),
 				pinnedNotes: this.noteEntityService.packMany(pins.map(pin => pin.note!), me, {
 					detail: true,
