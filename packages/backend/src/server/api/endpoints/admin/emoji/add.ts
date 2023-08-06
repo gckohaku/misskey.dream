@@ -68,7 +68,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 		private emojiEntityService: EmojiEntityService,
 		private moderationLogService: ModerationLogService,
-		private emojiModerationLogService: EmojiModerationLogService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const driveFile = await this.driveFilesRepository.findOneBy({
@@ -104,8 +103,6 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 			this.moderationLogService.insertModerationLog(me, "addEmoji", {
 				emojiId: emoji.id,
 			});
-
-			await this.emojiModerationLogService.insertEmojiModerationLog(me, emoji, 'Add');
 
 			return this.emojiEntityService.packDetailed(emoji);
 		});

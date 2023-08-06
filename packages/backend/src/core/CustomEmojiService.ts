@@ -14,6 +14,7 @@ import { UtilityService } from '@/core/UtilityService.js';
 import type { Config } from '@/config.js';
 import { query } from '@/misc/prelude/url.js';
 import type { Serialized } from '@/server/api/stream/types.js';
+import { EmojiModerationLogService } from './EmojiModerationLogService.js';
 
 const parseEmojiStrRegexp = /^(\w+)(?:@([\w.-]+))?$/;
 
@@ -42,6 +43,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 		private idService: IdService,
 		private emojiEntityService: EmojiEntityService,
 		private globalEventService: GlobalEventService,
+		private emojiModerationLogService: EmojiModerationLogService,
 	) {
 		this.cache = new MemoryKVCache<Emoji | null>(1000 * 60 * 60 * 12);
 
@@ -98,6 +100,7 @@ export class CustomEmojiService implements OnApplicationShutdown {
 			});
 
 			await this.usersRepository.increment({ id: data.userId }, 'emojiCount', 1);
+			await this.emojiModerationLogService.insertEmojiModerationLog(me, emoji, 'Add');
 		}
 
 		return emoji;
