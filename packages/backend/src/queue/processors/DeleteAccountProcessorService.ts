@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MoreThan } from 'typeorm';
 import { DI } from '@/di-symbols.js';
-import type { DriveFilesRepository, NotesRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
+import type { DriveFilesRepository, Emoji, EmojisRepository, NotesRepository, UserProfilesRepository, UsersRepository } from '@/models/index.js';
 import type { Config } from '@/config.js';
 import type Logger from '@/logger.js';
 import { DriveService } from '@/core/DriveService.js';
@@ -13,6 +13,7 @@ import { SearchService } from '@/core/SearchService.js';
 import { QueueLoggerService } from '../QueueLoggerService.js';
 import type Bull from 'bull';
 import type { DbUserDeleteJobData } from '../types.js';
+import { CustomEmojiService } from '@/core/CustomEmojiService.js';
 
 @Injectable()
 export class DeleteAccountProcessorService {
@@ -34,10 +35,14 @@ export class DeleteAccountProcessorService {
 		@Inject(DI.driveFilesRepository)
 		private driveFilesRepository: DriveFilesRepository,
 
+		@Inject(DI.emojisRepository)
+		private emojisRepository: EmojisRepository,
+
 		private driveService: DriveService,
 		private emailService: EmailService,
 		private queueLoggerService: QueueLoggerService,
 		private searchService: SearchService,
+		private customEmojiService: CustomEmojiService,
 	) {
 		this.logger = this.queueLoggerService.logger.createSubLogger('delete-account');
 	}
@@ -80,6 +85,20 @@ export class DeleteAccountProcessorService {
 			}
 
 			this.logger.succ('All of notes deleted');
+		}
+
+		{ // Delete Emoji
+			const emojis: Emoji[] = await this.emojisRepository.find({
+				where: {
+					userId: user.id,
+				},
+				order: {
+					id: 1,
+				},
+			});
+
+			if (emojis.length !== 0)
+				await this.customEmojiService.deleteBulk(emojis.map(v => v.id));
 		}
 
 		{ // Delete files
