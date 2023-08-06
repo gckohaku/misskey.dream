@@ -91,7 +91,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 			try {
 				// Create file
-				driveFile = await this.driveService.uploadFromUrl({ url: emoji.originalUrl, user: null, force: true });
+				driveFile = await this.driveService.uploadFromUrl({ url: emoji.originalUrl, user: me, force: true });
 			} catch (e) {
 				throw new ApiError();
 			}
