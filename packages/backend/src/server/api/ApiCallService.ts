@@ -297,7 +297,7 @@ export class ApiCallService implements OnApplicationShutdown {
 
 		if ((ep.meta.requireModerator || ep.meta.requireAdmin || ep.meta.requireEmojiModerator) && !user!.isRoot) {
 			const myRoles = await this.roleService.getUserRoles(user!.id);
-			if (ep.meta.requireModerator && !myRoles.some(r => r.permissionGroup === 'EmojiModerator' || r.permissionGroup === 'MainModerator' || r.permissionGroup === 'Admin')) {
+			if (ep.meta.requireEmojiModerator && !myRoles.some(r => r.permissionGroup === 'EmojiModerator' || r.permissionGroup === 'MainModerator' || r.permissionGroup === 'Admin')) {
 				throw new ApiError({
 					message: 'You are not assigned to a emoji moderator role.',
 					code: 'ROLE_PERMISSION_DENIED',

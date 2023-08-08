@@ -6,6 +6,7 @@ export const meta = {
 	tags: ['admin'],
 
 	requireCredential: true,
+	requireEmojiModerator: true,
 	requireRolePolicy: 'canManageCustomEmojis',
 } as const;
 
