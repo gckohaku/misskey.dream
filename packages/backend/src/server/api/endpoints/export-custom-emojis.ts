@@ -5,6 +5,7 @@ import { QueueService } from '@/core/QueueService.js';
 
 export const meta = {
 	secure: true,
+	requireEmojiModerator: true,
 	requireCredential: true,
 	limit: {
 		duration: ms('1hour'),
