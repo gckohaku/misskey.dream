@@ -121,10 +121,9 @@ import { deepClone } from '@/scripts/clone';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import { miLocalStorage } from '@/local-storage';
 import { claimAchievement } from '@/scripts/achievements';
+import { isRelationalAvailable } from '@/scripts/relational';
 
 const modal = inject('modal');
-
-const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
 
 const props = withDefaults(defineProps<{
 	reply?: misskey.entities.Note;

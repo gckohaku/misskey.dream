@@ -74,8 +74,7 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
-
-const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
+import { isRelationalAvailable } from '@/scripts/relational';
 
 let isLocked = $ref($i.isLocked);
 let autoAcceptFollowed = $ref($i.autoAcceptFollowed);

@@ -27,10 +27,11 @@
 				<i v-if="isMyRenote" class="ti ti-dots" :class="$style.renoteMenu"></i>
 				<MkTime :time="note.createdAt"/>
 			</button>
-			<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
+			<span v-if="(note.visibility !== 'public' && note.visibility !== 'relational') || (note.visibility === 'relational' && isRelationalAvailable)" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
 				<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 				<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
 				<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
+				<i v-else-if="note.visibility === 'relational' && isRelationalAvailable" class="ti ti-circles-relation"></i>
 			</span>
 			<span v-if="note.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
 			<span v-if="note.channel" style="margin-left: 0.5em;" :title="note.channel.name"><i class="ti ti-device-tv"></i></span>
@@ -168,6 +169,7 @@ import { MenuItem } from '@/types/menu';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import { showMovedDialog } from '@/scripts/show-moved-dialog';
 import { shouldCollapsed } from '@/scripts/collapsed';
+import { isRelationalAvailable } from '@/scripts/relational';
 
 const props = defineProps<{
 	note: misskey.entities.Note;
