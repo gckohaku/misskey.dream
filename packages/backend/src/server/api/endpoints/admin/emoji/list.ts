@@ -78,7 +78,8 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 	) {
 		super(meta, paramDef, async (ps, me) => {
 			const q = this.queryService.makePaginationQuery(this.emojisRepository.createQueryBuilder('emoji'), ps.sinceId, ps.untilId)
-				.andWhere('emoji.host IS NULL');
+				.andWhere('emoji.host IS NULL')
+				.innerJoinAndSelect('emoji.user', 'user');
 
 			let emojis: Emoji[];
 
@@ -88,16 +89,25 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				emojis = await q.getMany();
 				const queryarry = ps.query.match(/\:([a-z0-9_]*)\:/g);
+				const queryuser = ps.query.match(/\@([a-zA-Z0-9_]+)/g);
 
 				if (queryarry) {
 					emojis = emojis.filter(emoji =>
 						queryarry.includes(`:${emoji.name}:`),
 					);
-				} else {
+				}
+				else if (queryuser) {
+					const users = queryuser.map(v => v.replace('@', '').toLowerCase());
+					emojis = emojis.filter((emoji) =>
+						users.includes(emoji.user?.username.toLowerCase() ?? '')
+					);
+				}
+				else {
 					emojis = emojis.filter(emoji =>
 						emoji.name.includes(ps.query!) ||
 						emoji.aliases.some(a => a.includes(ps.query!)) ||
-						emoji.category?.includes(ps.query!));
+						emoji.category?.includes(ps.query!)
+					);
 				}
 				emojis.splice(ps.limit + 1);
 			} else {
