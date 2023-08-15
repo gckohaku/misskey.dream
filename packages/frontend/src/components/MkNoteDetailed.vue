@@ -29,6 +29,7 @@
 				<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 				<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
 				<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
+				<i v-else-if="note.visibility === 'relational' && isRelationalAvailable" class="ti ti-circles-relation"></i>
 			</span>
 			<span v-if="note.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
 		</div>
@@ -47,6 +48,7 @@
 							<i v-if="appearNote.visibility === 'home'" class="ti ti-home"></i>
 							<i v-else-if="appearNote.visibility === 'followers'" class="ti ti-lock"></i>
 							<i v-else-if="appearNote.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
+							<i v-else-if="appearNote.visibility === 'relational' && isRelationalAvailable" class="ti ti-circles-relation"></i>
 						</span>
 						<span v-if="appearNote.localOnly" style="margin-left: 0.5em;" :title="i18n.ts._visibility['disableFederation']"><i class="ti ti-rocket-off"></i></span>
 					</div>
@@ -164,6 +166,12 @@ import { claimAchievement } from '@/scripts/achievements';
 import { MenuItem } from '@/types/menu';
 import MkRippleEffect from '@/components/MkRippleEffect.vue';
 import { showMovedDialog } from '@/scripts/show-moved-dialog';
+
+/* dream: リレーショナルな投稿への対応 */
+import { instance } from '@/instance';
+
+const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
+/* dream: リレーショナルな投稿への対応 ここまで */
 
 const props = defineProps<{
 	note: misskey.entities.Note;
