@@ -33,6 +33,7 @@ import { i18n } from '@/i18n';
 import { instance } from '@/instance';
 import { $i } from '@/account';
 import { definePageMetadata } from '@/scripts/page-metadata';
+import { isRelationalAvailable } from '@/scripts/relational';
 
 provide('shouldOmitHeaderTitle', true);
 
@@ -40,7 +41,6 @@ const XTutorial = defineAsyncComponent(() => import('./timeline.tutorial.vue'));
 
 const isLocalTimelineAvailable = ($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable);
 const isGlobalTimelineAvailable = ($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable);
-const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
 const keymap = {
 	't': focus,
 };

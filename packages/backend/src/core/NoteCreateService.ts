@@ -253,6 +253,10 @@ export class NoteCreateService implements OnApplicationShutdown {
 			throw new Error('Renote target is not public or home');
 		}
 
+		if (data.renote && data.renote.visibility === 'relational' && data.visibility === 'public') {
+			data.visibility = 'relational';
+		}
+
 		// Renote対象がpublicではないならhomeにする
 		if (data.renote && data.renote.visibility !== 'public' && data.visibility === 'public') {
 			data.visibility = 'home';
@@ -263,17 +267,13 @@ export class NoteCreateService implements OnApplicationShutdown {
 			data.visibility = 'followers';
 		}
 
-		if (data.renote && data.renote.visibility === 'relational') {
+		if (data.reply && data.reply.visibility === 'relational' && data.visibility === 'public') {
 			data.visibility = 'relational';
 		}
 
 		// 返信対象がpublicではないならhomeにする
 		if (data.reply && data.reply.visibility !== 'public' && data.visibility === 'public') {
 			data.visibility = 'home';
-		}
-
-		if (data.reply && data.reply.visibility === 'relational') {
-			data.visibility = 'relational';
 		}
 
 		// ローカルのみをRenoteしたらローカルのみにする

@@ -14,7 +14,7 @@
 			<MkA :to="notePage(note)">
 				<MkTime :time="note.createdAt" />
 			</MkA>
-			<span v-if="note.visibility !== 'public'" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
+			<span v-if="(note.visibility !== 'public' && note.visibility !== 'relational') || (note.visibility === 'relational' && isRelationalAvailable)" style="margin-left: 0.5em;" :title="i18n.ts._visibility[note.visibility]">
 				<i v-if="note.visibility === 'home'" class="ti ti-home"></i>
 				<i v-else-if="note.visibility === 'followers'" class="ti ti-lock"></i>
 				<i v-else-if="note.visibility === 'specified'" ref="specified" class="ti ti-mail"></i>
@@ -35,16 +35,13 @@ import { userPage } from '@/filters/user';
 import { defaultStore } from '@/store';
 
 // dream での追加
-import { $i } from '@/account';
-import { instance } from '@/instance';
+import { isRelationalAvailable } from '@/scripts/relational';
 
 defineProps<{
 	note: misskey.entities.Note;
 	pinned?: boolean;
 }>();
 
-// 以下 dream での追加
-const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
 
 const headerWrapStyles = {
 	flexWrap: "wrap"

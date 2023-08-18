@@ -39,11 +39,11 @@ import MkTimeline from '@/components/MkTimeline.vue';
 import { i18n } from '@/i18n';
 import { $i } from '@/account';
 import { instance } from '@/instance';
+import { isRelationalAvailable } from '@/scripts/relational';
 
 const name = 'timeline';
 const isLocalTimelineAvailable = (($i == null && instance.policies.ltlAvailable) || ($i != null && $i.policies.ltlAvailable));
 const isGlobalTimelineAvailable = (($i == null && instance.policies.gtlAvailable) || ($i != null && $i.policies.gtlAvailable));
-const isRelationalAvailable = $i != null && (new Date($i.createdAt) < new Date(instance.relationalDate));
 
 const widgetPropsDef = {
 	showHeader: {
