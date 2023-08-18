@@ -16,6 +16,11 @@ export const meta = {
 			code: 'NOT_OWNER_OR_PERMISSION_DENIED',
 			id: '73952b00-d3e3-4038-b2c6-f4b4532e3906'
 		},
+		requireLicense: {
+			message: '追加するには必ずライセンスを指定してください。',
+			code: 'REQUIRE_LICENSE',
+			id: 'bf030fe3-0105-41a6-931b-577dda09df34',
+		},
 	},
 } as const;
 
@@ -43,6 +48,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private roleService: RoleService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
+			if (ps.license == null || ps.license.trim().length === 0) {
+				throw new ApiError(meta.errors.requireLicense);
+			}
+
 			// 一度すべての所収者を調べる
 			if (!await this.roleService.isEmojiModerator(me) && !await this.customEmojiService.isOwnerCheckBulk(ps.ids, me.id)) {
 				throw new ApiError(meta.errors.notOwnerOrpermissionDenied);
