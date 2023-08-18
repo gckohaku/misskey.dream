@@ -47,7 +47,7 @@ export const meta = {
 			id: '43049d5b-e1c4-4b90-9c16-0e46cf06f18b',
 		},
 		requireLicense: {
-			message: '追加するには必ずライセンスを指定してください。',
+			message: 'You must enter the license into add emoji.',
 			code: 'REQUIRE_LICENSE',
 			id: 'bf030fe3-0105-41a6-931b-577dda09df34',
 		},
