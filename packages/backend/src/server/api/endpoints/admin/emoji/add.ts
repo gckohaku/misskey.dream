@@ -7,7 +7,6 @@ import { CustomEmojiService } from '@/core/CustomEmojiService.js';
 import { ModerationLogService } from '@/core/ModerationLogService.js';
 import { EmojiEntityService } from '@/core/entities/EmojiEntityService.js';
 import { ApiError } from '../../../error.js';
-import { EmojiModerationLogService } from '@/core/EmojiModerationLogService.js';
 
 export const meta = {
 	tags: ["admin"],
@@ -25,6 +24,11 @@ export const meta = {
 			message: "Emoji that have same name already exists.",
 			code: "SAME_NAME_EMOJI_EXISTS",
 			id: "c85c8b53-084e-6f13-7688-c7bef8dee383",
+		},
+		requireLicense: {
+			message: 'You must enter the license into add emoji.',
+			code: 'REQUIRE_LICENSE',
+			id: 'bf030fe3-0105-41a6-931b-577dda09df34',
 		},
 	},
 } as const;
@@ -70,6 +74,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 		private moderationLogService: ModerationLogService,
 	) {
 		super(meta, paramDef, async (ps, me) => {
+			if (ps.license == null || ps.license.trim().length === 0) {
+				throw new ApiError(meta.errors.requireLicense);
+			}
+
 			const driveFile = await this.driveFilesRepository.findOneBy({
 				id: ps.fileId,
 			});

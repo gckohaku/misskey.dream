@@ -46,6 +46,11 @@ export const meta = {
 			code: 'ROLE_PERMISSION_DENIED',
 			id: '43049d5b-e1c4-4b90-9c16-0e46cf06f18b',
 		},
+		requireLicense: {
+			message: 'You must enter the license into add emoji.',
+			code: 'REQUIRE_LICENSE',
+			id: 'bf030fe3-0105-41a6-931b-577dda09df34',
+		},
 	},
 } as const;
 
@@ -131,6 +136,10 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 
 				if (await this.usersRepository.countBy({ id: ps.userId }) === 0)
 					throw new ApiError(meta.errors.noSuchUser);
+			}
+
+			if (oldEmoji.license !== ps.license && (ps.license == null || ps.license.trim().length === 0)) {
+				throw new ApiError(meta.errors.requireLicense);
 			}
 
 			if ((

@@ -58,7 +58,7 @@ export default class extends Endpoint<typeof meta, typeof paramDef> {
 				throw new ApiError(meta.errors.notOwnerOrpermissionDenied);
 			}
 
-			await this.customEmojiService.delete(ps.id, me.id);
+			await this.customEmojiService.delete(ps.id, oldEmoji.userId);
 		});
 	}
 }

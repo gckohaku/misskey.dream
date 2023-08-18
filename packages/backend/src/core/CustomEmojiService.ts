@@ -213,6 +213,22 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	}
 
 	@bindThis
+	public async isOwnerCheckBulk(ids: Emoji['id'][], userId: User['id']) {
+		const emojis = await this.emojisRepository.findBy({
+			id: In(ids),
+		});
+
+		let removableEmojiCount = 0;
+		for (const emoji of emojis) {
+			if (emoji.userId === userId) {
+				removableEmojiCount++;
+			}
+		}
+
+		return ids.length === removableEmojiCount;
+	}
+
+	@bindThis
 	public async setCategoryBulk(ids: Emoji['id'][], category: string | null) {
 		await this.emojisRepository.update({
 			id: In(ids),
@@ -245,12 +261,13 @@ export class CustomEmojiService implements OnApplicationShutdown {
 	}
 
 	@bindThis
-	public async delete(id: Emoji['id'], userId: User['id']) {
+	public async delete(id: Emoji['id'], userId?: User['id'] | null) {
 		const emoji = await this.emojisRepository.findOneByOrFail({ id: id });
 
 		await this.emojisRepository.delete(emoji.id);
 
-		await this.usersRepository.decrement({ id: userId }, 'emojiCount', 1);
+		if (userId)
+			await this.usersRepository.decrement({ id: userId }, 'emojiCount', 1);
 
 		this.localEmojisCache.refresh();
 
